@@ -1,0 +1,10 @@
+[metadata]
+name = "ClearMatch"
+version = 0.0.1
+
+[options]
+packages = "clearmatch"
+install_requires =
+ 	matplotlib,
+	numpy,
+	pandas
