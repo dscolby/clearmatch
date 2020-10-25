@@ -99,6 +99,15 @@ class ClearMatch:
         return self.host_data.dtypes, self.host_data.iloc[:, 0].size, missing_count[1], missing_count[0], \
             (missing_count[0] / missing_count[1]) * 100
 
+    def partition(self, col):
+        """Creates DataFrames based on unique values in a given column in host_data"""
+        df_names = {}
+
+        for k, v in self.host_df.groupby(str(col)):
+            df_names[k] = v
+
+        return df_names
+
     @staticmethod
     def plot():
         """Creates a bar plot of missing vs. non-missing values"""

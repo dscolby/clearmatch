@@ -17,6 +17,10 @@ test_clearmatch = ClearMatch(0, host_df, 0, key_df, value_list)
 # Build the lookup structures
 test_clearmatch.create_lookup()
 
+# Test the partition method
+test_partitions = test_clearmatch.partition('host')
+print(test_partitions['delfin'])
+
 # Replace the host records with matches from the key dataframe
 joined_data = test_clearmatch.join()
 
