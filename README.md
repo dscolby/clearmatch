@@ -4,3 +4,7 @@ If the records to be matched to are synonyms of a reference record in the key th
 Clearmatch also makes it easy to see summary statistics and generate bar plots of missingness.
 
 Dependencies: Matplotlib, Numpy, Pandas
+
+
+Installatiion
+![Installation](images\Installation.jpg)
