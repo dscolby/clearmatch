@@ -9,3 +9,7 @@ Dependencies: Matplotlib, Numpy, Pandas
 Installation
 
 ![Installation](images/Installation.jpg)
+
+Creating ClearMatch objects from DataFrames
+
+![Creating ClearMatch Objects from DataFrame objects](images/make_object.jpg)
