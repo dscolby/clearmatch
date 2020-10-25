@@ -6,5 +6,5 @@ Clearmatch also makes it easy to see summary statistics and generate bar plots o
 Dependencies: Matplotlib, Numpy, Pandas
 
 
-Installatiion
-![Installation](images\Installation.png)
+Installation
+![Installation](Installation.png)
