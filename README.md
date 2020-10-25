@@ -7,4 +7,4 @@ Dependencies: Matplotlib, Numpy, Pandas
 
 
 Installation
-![Installation](Installation.png)
+![](Installation.jpg)
