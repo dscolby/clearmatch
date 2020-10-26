@@ -13,3 +13,7 @@ Installation
 Creating ClearMatch objects from DataFrames
 
 ![Creating ClearMatch Objects from DataFrame objects](images/make_object.jpg)
+
+Defining the lookup structures for matching
+
+!Defining the lookup structures for matching](images/lookup_structures.jpg)
