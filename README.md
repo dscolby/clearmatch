@@ -16,4 +16,4 @@ Creating ClearMatch objects from DataFrames
 
 Defining the lookup structures for matching
 
-!Defining the lookup structures for matching](images/lookup_structures.jpg)
+![Defining the lookup structures for matching](images/lookup_structures.jpg)
