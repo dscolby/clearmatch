@@ -17,3 +17,8 @@ Creating ClearMatch objects from DataFrames
 Defining the lookup structures for matching
 
 ![Defining the lookup structures for matching](images/lookup_structures.jpg)
+
+Partitioning the host DataFrame based on unique values in a given column
+  *Note that the resulting DataFrames are returned in a dictionary, so you should use the ['name'] convention to access the DataFrames
+  
+![Partitioning the host DataFrame](images/partition.jpg)
