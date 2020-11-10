@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="Clearmatch",
-    version="0.0.2",
+    version="1.0.0",
     author="Darren Colby",
     author_email="dscolby17@gmail.com",
     description="Library for deterministic record matching",

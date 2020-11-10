@@ -2,7 +2,7 @@
 # Date: 10/25/2020
 # Purpose: To test the functioning of ClearMatch
 
-from clearmatch import ClearMatch
+from clearmatch.clearmatch import ClearMatch
 import pandas as pd
 
 # Import the dataframe and split it into host, key, and values components
