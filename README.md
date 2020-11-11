@@ -8,31 +8,30 @@ Dependencies: Matplotlib, Numpy, Pandas
 
 Installation
 
-![Installation](images/Installation.jpg) {width: 70%;
-heigth: 70%}
+![Installation](images/Installation.jpg){:height="36px" width="36px"}
 
 Creating ClearMatch objects from DataFrames
 
-![Creating ClearMatch Objects from DataFrame objects](images/make_object.jpg){:height="70%" width="70%"}
+![Creating ClearMatch Objects from DataFrame objects](images/make_object.jpg){:height="36px" width="36px"}
 
 Partitioning the host DataFrame based on unique values in a given column
   *Note that the resulting DataFrames are returned in a dictionary, so you should use the ['name'] convention to access the DataFrames
   
-![Partitioning the host DataFrame](images/partition.jpg){:height="70%" width="70%"}
+![Partitioning the host DataFrame](images/partition.jpg){:height="36px" width="36px"}
 
 Defining the lookup structures for matching
 
-![Defining the lookup structures for matching](images/lookup_structures.jpg){:height="70%" width="70%"}
+![Defining the lookup structures for matching](images/lookup_structures.jpg){:height="36px" width="36px"}
 
 
 Joining matches to the host DataFrame
   
-![Joining matches to the host DataFrame](images/join.jpg){:height="70%" width="70%"}
+![Joining matches to the host DataFrame](images/join.jpg){:height="36px" width="36px"}
 
 Showing summary statistics
 
-![Showing summary statistics](images/summary.jpg){:height="70%" width="70%"}
+![Showing summary statistics](images/summary.jpg){:height="36px" width="36px"}
 
 Visualizing missingness
 
-![Visualizing missingness](images/visualize.jpg){:height="70%" width="70%"}
+![Visualizing missingness](images/visualize.jpg){:height="36px" width="36px"}
