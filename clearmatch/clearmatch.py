@@ -75,7 +75,7 @@ class ClearMatch:
         self.join_any_helper(self.host_data, self.host_col, self.hcol, self.host_df, match_substring=True)
         return self.host_df
 
-    def partition(self, col):
+    def block(self, col):
         """Creates DataFrames based on unique values in a given column in host_data"""
         df_names = {}
 
