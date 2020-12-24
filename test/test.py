@@ -21,10 +21,28 @@ test_clearmatch.create_lookup()
 test_partitions = test_clearmatch.partition('host')
 print(test_partitions['delfin'])
 
-# Replace the host records with matches from the key dataframe
+# Join the host records with matches from the key dataframe
 joined_data = test_clearmatch.join()
 
-print(host_df.head(7))
+print(joined_data.head(7))
+
+test_clearmatch.plot()
+
+test_clearmatch.summary()
+
+# Join the host records with potential matches that contain substrings of the host records
+joined_data = test_clearmatch.join_substring()
+
+print(joined_data.head(7))
+
+test_clearmatch.plot()
+
+test_clearmatch.summary()
+
+# Replace the host records with potential matches that contain substrings of the host records
+replaced_data = test_clearmatch.replace(match_substring=True)
+
+print(replaced_data.head(7))
 
 test_clearmatch.plot()
 

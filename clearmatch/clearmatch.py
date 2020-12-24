@@ -1,14 +1,15 @@
 # Author: Darren
-# Date: 11/10/2020
+# Date: 12/23/2020
 # Purpose: To match records from one dataset to another using synonyms from the second dataset
 
 from matplotlib.pyplot import bar, show, suptitle
-import numpy as np
+from numpy import NaN
 import pandas as pd
 
-records_dict = {}
-names = ["Missing", "Nonmissing"]
+NAMES = ["Missing", "Nonmissing"]
+
 missing_count = [0, 0]
+records_dict = {}
 
 
 class ClearMatch:
@@ -56,32 +57,43 @@ class ClearMatch:
 
         return records_dict
 
-    def replace(self):
+    def join(self, match_substring=False):
+        """Adds a column of keys that correspond to host values or inserts NaNs if no match exists"""
+        self.host_df['Match'] = NaN  # New column for matches
+
+        if not match_substring:
+            self.join_exact_helper(self.host_data, self.host_col, self.hcol, self.host_df)
+        else:
+            self.join_any_helper(self.host_data, self.host_col, self.hcol, self.host_df)
+
+        return self.host_df
+
+    def join_substring(self):
+        """Adds a column of keys that correspond to potential matches in which host values are substrings.
+        Also adds an additional column."""
+        self.host_data['PartialMatch'] = NaN
+        self.join_any_helper(self.host_data, self.host_col, self.hcol, self.host_df, match_substring=True)
+        return self.host_df
+
+    def partition(self, col):
+        """Creates DataFrames based on unique values in a given column in host_data"""
+        df_names = {}
+
+        for k, v in self.host_df.groupby(str(col)):
+            df_names[k] = v
+
+        return df_names
+
+    def replace(self, match_substring=False):
         """Checks host values in the dictionary and replaces them with their associated keys or NaN is no key is
         found """
-        for key in records_dict:
-            for record in self.host_data.iloc[:, 0]:
-                if record in records_dict[key]:
-                    self.host_df.replace(record, str(key), inplace=True)  # Replaces the element with the correct key
-                    missing_count[1] += 1  # Useful so we can see statistics on missingness later
-                else:
-                    self.host_df.loc[self.host_col].replace('record', np.NaN)
+        global missing_count
+        missing_count = [0, 0]
 
-        missing_count[0] = (self.host_data.iloc[:, 0].size - missing_count[1])
-
-    def join(self):
-        """Adds a column of keys that correspond to host values or inserts NaNs if no match exists"""
-        self.host_df['Match'] = np.NaN  # New column for matches
-
-        for key in records_dict:
-            for record in self.host_data.iloc[:, self.host_col]:
-                if record in records_dict[key]:
-                    n = self.host_data[self.host_data[self.hcol] == record].index[0]  # Stores the index
-                    self.host_df.loc[n, 'Match'] = key  # Replaces the value at index n with the key
-                    missing_count[1] += 1
-
-        missing_count[0] = (self.host_data.iloc[:, 0].size - missing_count[1])
-
+        if not match_substring:
+            self.replace_exact_helper(self.host_data, self.host_col, self.host_df)
+        else:
+            self.replace_any_helper(self.host_data, self.host_col, self.host_df)
         return self.host_df
 
     def summary(self):
@@ -99,18 +111,69 @@ class ClearMatch:
         return self.host_data.dtypes, self.host_data.iloc[:, 0].size, missing_count[1], missing_count[0], \
             (missing_count[0] / missing_count[1]) * 100
 
-    def partition(self, col):
-        """Creates DataFrames based on unique values in a given column in host_data"""
-        df_names = {}
+    # Adds a column of keys that correspond to host values  with substrings or inserts NaNs if no match exists
+    # Parameters: Attributes passed from the clearmatch class
+    @staticmethod
+    def join_any_helper(host_data, host_col, hcol, host_df, match_substring=False):
+        """This function should only be called by a clearmatch object"""
+        for key in records_dict:
+            for record in host_data.iloc[:, host_col]:
+                for string in records_dict[key]:
+                    if record in string:
+                        n = host_data[host_data[hcol] == record].index[0]  # Stores the index
 
-        for k, v in self.host_df.groupby(str(col)):
-            df_names[k] = v
+                        if not match_substring:  # If no matches have been found
+                            host_df.loc[n, 'Match'] = key  # Replaces the value at index n with the key
+                            missing_count[1] += 1
 
-        return df_names
+                        if match_substring and host_df.loc[n, 'Match'] != key:  # If exact matches are already found
+                            host_df.loc[n, 'PartialMatch'] = key
+                            missing_count[1] += 1
+
+        missing_count[0] = (host_data.iloc[:, 0].size - missing_count[1])
+
+    # Adds a column of keys that correspond to host values or inserts NaNs if no match exists
+    # Parameters: Attributes passed from the clearmatch class
+    @staticmethod
+    def join_exact_helper(host_data, host_col, hcol, host_df):
+        """This function should only be called by a clearmatch object"""
+        for key in records_dict:
+            for record in host_data.iloc[:, host_col]:
+                if record in records_dict[key]:
+                    n = host_data[host_data[hcol] == record].index[0]  # Stores the index
+                    host_df.loc[n, 'Match'] = key  # Replaces the value at index n with the key
+                    missing_count[1] += 1
+
+        missing_count[0] = (host_data.iloc[:, 0].size - missing_count[1])
 
     @staticmethod
     def plot():
         """Creates a bar plot of missing vs. non-missing values"""
-        bar(names, missing_count)
+        bar(NAMES, missing_count)
         suptitle('Missingness')
         show()
+
+    # Checks host values in the DataFrame and replaces them with their associated keys they are substrings of aliases
+    @staticmethod
+    def replace_any_helper(host_data, host_col, host_df):
+        """This function should only be called by a clearmatch object"""
+        for key in records_dict:
+            for record in host_df.iloc[:, host_col]:
+                for string in records_dict[key]:
+                    if record in string:
+                        host_df.replace(record, str(key), inplace=True)  # Replaces element with correct key
+                        missing_count[1] += 1  # Useful so we can see statistics on missingness later
+
+        missing_count[0] = (host_data.iloc[:, 0].size - missing_count[1])
+
+    # Checks host values in the DataFrame and replaces them with their associated keys
+    @staticmethod
+    def replace_exact_helper(host_data, host_col, host_df):
+        """This function should only be called by a clearmatch object"""
+        for key in records_dict:
+            for record in host_data.iloc[:, host_col]:
+                if record in records_dict[key]:
+                    host_df.replace(record, str(key), inplace=True)  # Replaces element with correct key
+                    missing_count[1] += 1  # Useful so we can see statistics on missingness later
+
+        missing_count[0] = (host_data.iloc[:, 0].size - missing_count[1])
