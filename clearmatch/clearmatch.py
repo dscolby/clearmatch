@@ -1,5 +1,5 @@
 # Author: Darren
-# Date: 12/23/2020
+# Date: 12/24/2020
 # Purpose: To match records from one dataset to another using synonyms from the second dataset
 
 from matplotlib.pyplot import bar, show, suptitle
@@ -19,6 +19,7 @@ class ClearMatch:
             be matched to; key_col, the index of the column to be used as the linking key; key_data, a DataFrame that
             contains the key_col; values_col, a list of indices within the key_data to be matched with the host_data
         Note: host_data and key_data may or may not come from separate DataFrames"""
+
         # Various statements to enforce parameter types
         if not isinstance(host_col, int):
             raise TypeError("the host_col parameter must be an integer")
@@ -35,6 +36,7 @@ class ClearMatch:
         if not isinstance(value_cols, list):
             raise TypeError("the value_cols parameter must be a list that corresponds to the key_data")
 
+        # Actual class attributes
         self.host_df = host_data  # To return after joining or replacing data
         self.host_col = host_col
         self.host_data = pd.DataFrame(host_data.iloc[:, self.host_col])
@@ -47,20 +49,24 @@ class ClearMatch:
         """Creates a dictionary with records in the key parameter as keys and corresponding rows in the values
             parameter as values"""
         # noinspection PyTypeChecker
+        # Takes values from DataFrames
         key_tuple = tuple([i for sublist in self.key_data.values.tolist() for i in sublist])
         values_tuple = tuple(self.value_data.values.tolist())
         index = 0
 
+        # Transforms them into dictionaries
         for element in key_tuple:
             records_dict[str(element)] = values_tuple[index]
             index += 1
 
         return records_dict
 
+    # Parameters: match_substring; whether to look for substrings
     def join(self, match_substring=False):
         """Adds a column of keys that correspond to host values or inserts NaNs if no match exists"""
         self.host_df['Match'] = NaN  # New column for matches
 
+        # Calls helper methods
         if not match_substring:
             self.join_exact_helper(self.host_data, self.host_col, self.hcol, self.host_df)
         else:
@@ -71,29 +77,33 @@ class ClearMatch:
     def join_substring(self):
         """Adds a column of keys that correspond to potential matches in which host values are substrings.
         Also adds an additional column."""
-        self.host_data['PartialMatch'] = NaN
-        self.join_any_helper(self.host_data, self.host_col, self.hcol, self.host_df, match_substring=True)
+        self.host_data['PartialMatch'] = NaN  # New column for matches
+        self.join_any_helper(self.host_data, self.host_col, self.hcol, self.host_df, match_substring=True)  # Helper
         return self.host_df
 
+    # Parameters: col; a column whose unique values will be used to create separated DataFrames
     def block(self, col):
         """Creates DataFrames based on unique values in a given column in host_data"""
-        df_names = {}
+        df_names = {}  # A dictionary of DataFrames partitioned by user specified values
 
-        for k, v in self.host_df.groupby(str(col)):
-            df_names[k] = v
+        for key, value in self.host_df.groupby(str(col)):
+            df_names[key] = value
 
         return df_names
 
+    # Parameters; match_substring; whether to look for substrings or exact matches
     def replace(self, match_substring=False):
         """Checks host values in the dictionary and replaces them with their associated keys or NaN is no key is
         found """
         global missing_count
         missing_count = [0, 0]
 
+        # Calls helper methods
         if not match_substring:
             self.replace_exact_helper(self.host_data, self.host_col, self.host_df)
         else:
             self.replace_any_helper(self.host_data, self.host_col, self.host_df)
+
         return self.host_df
 
     def summary(self):
@@ -108,11 +118,12 @@ class ClearMatch:
         print("Number of missing records:", missing_count[0])
         print("Percentage of missing records:", (missing_count[0] / missing_count[1]) * 100)
 
+        # Tuple with all of the above information
         return self.host_data.dtypes, self.host_data.iloc[:, 0].size, missing_count[1], missing_count[0], \
             (missing_count[0] / missing_count[1]) * 100
 
     # Adds a column of keys that correspond to host values  with substrings or inserts NaNs if no match exists
-    # Parameters: Attributes passed from the clearmatch class
+    # Parameters: (host_data...host_df); Attributes passed from the clearmatch class: match_substring; find substrings
     @staticmethod
     def join_any_helper(host_data, host_col, hcol, host_df, match_substring=False):
         """This function should only be called by a clearmatch object"""
@@ -154,6 +165,7 @@ class ClearMatch:
         show()
 
     # Checks host values in the DataFrame and replaces them with their associated keys they are substrings of aliases
+    # Parameters: (host_data, host_col, host_df); parameters passed from the clearmatch object
     @staticmethod
     def replace_any_helper(host_data, host_col, host_df):
         """This function should only be called by a clearmatch object"""
