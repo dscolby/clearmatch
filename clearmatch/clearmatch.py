@@ -68,9 +68,9 @@ class ClearMatch:
 
         # Calls helper methods
         if not match_substring:
-            self.join_exact_helper(self.host_data, self.host_col, self.hcol, self.host_df)
+            self.__join_exact_helper(self.host_data, self.host_col, self.hcol, self.host_df)
         else:
-            self.join_any_helper(self.host_data, self.host_col, self.hcol, self.host_df)
+            self.__join_any_helper(self.host_data, self.host_col, self.hcol, self.host_df)
 
         return self.host_df
 
@@ -78,7 +78,7 @@ class ClearMatch:
         """Adds a column of keys that correspond to potential matches in which host values are substrings.
         Also adds an additional column."""
         self.host_data['PartialMatch'] = NaN  # New column for matches
-        self.join_any_helper(self.host_data, self.host_col, self.hcol, self.host_df, match_substring=True)  # Helper
+        self.__join_any_helper(self.host_data, self.host_col, self.hcol, self.host_df, match_substring=True)  # Helper
         return self.host_df
 
     # Parameters: col; a column whose unique values will be used to create separated DataFrames
@@ -99,9 +99,9 @@ class ClearMatch:
 
         # Calls helper methods
         if not match_substring:
-            self.replace_exact_helper(self.host_data, self.host_col, self.host_df)
+            self.__replace_exact_helper(self.host_data, self.host_col, self.host_df)
         else:
-            self.replace_any_helper(self.host_data, self.host_col, self.host_df)
+            self.__replace_any_helper(self.host_data, self.host_col, self.host_df)
 
         return self.host_df
 
@@ -123,7 +123,7 @@ class ClearMatch:
 
     # Adds a column of keys that correspond to host values  with substrings or inserts NaNs if no match exists
     # Parameters: (host_data...host_df); Attributes passed from the clearmatch class: match_substring; find substrings
-    def join_any_helper(self, host_data, host_col, hcol, host_df, match_substring=False):
+    def __join_any_helper(self, host_data, host_col, hcol, host_df, match_substring=False):
         """This function should only be called by a clearmatch object"""
         for key in self.records_dict:
             for record in host_data.iloc[:, host_col]:
@@ -143,7 +143,7 @@ class ClearMatch:
 
     # Adds a column of keys that correspond to host values or inserts NaNs if no match exists
     # Parameters: Attributes passed from the clearmatch class
-    def join_exact_helper(self, host_data, host_col, hcol, host_df):
+    def __join_exact_helper(self, host_data, host_col, hcol, host_df):
         """This function should only be called by a clearmatch object"""
         for key in self.records_dict:
             for record in host_data.iloc[:, host_col]:
@@ -154,15 +154,9 @@ class ClearMatch:
 
         self.missing_count[0] = (host_data.iloc[:, 0].size - self.missing_count[1])
 
-    def plot(self):
-        """Creates a bar plot of missing vs. non-missing values"""
-        bar(self.NAMES, self.missing_count)
-        suptitle('Missingness')
-        show()
-
     # Checks host values in the DataFrame and replaces them with their associated keys they are substrings of aliases
     # Parameters: (host_data, host_col, host_df); parameters passed from the clearmatch object
-    def replace_any_helper(self, host_data, host_col, host_df):
+    def __replace_any_helper(self, host_data, host_col, host_df):
         """This function should only be called by a clearmatch object"""
         for key in self.records_dict:
             for record in host_df.iloc[:, host_col]:
@@ -174,7 +168,7 @@ class ClearMatch:
         self.missing_count[0] = (host_data.iloc[:, 0].size - self.missing_count[1])
 
     # Checks host values in the DataFrame and replaces them with their associated keys
-    def replace_exact_helper(self, host_data, host_col, host_df):
+    def __replace_exact_helper(self, host_data, host_col, host_df):
         """This function should only be called by a clearmatch object"""
         for key in self.records_dict:
             for record in host_data.iloc[:, host_col]:
@@ -183,3 +177,10 @@ class ClearMatch:
                     self.missing_count[1] += 1  # Useful so we can see statistics on missingness later
 
         self.missing_count[0] = (host_data.iloc[:, 0].size - self.missing_count[1])
+
+    @classmethod
+    def plot(cls):
+        """Creates a bar plot of missing vs. non-missing values"""
+        bar(cls.NAMES, cls.missing_count)
+        suptitle('Missingness')
+        show()
