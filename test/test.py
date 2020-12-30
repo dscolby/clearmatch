@@ -12,7 +12,7 @@ key_df = pd.DataFrame(test_df.iloc[:, 1:6])
 value_list = [2, 3, 4, 5, 6]
 
 # Create a ClearMatch object
-test_clearmatch = ClearMatch(0, host_df, 0, key_df, value_list)
+test_clearmatch = ClearMatch(0, host_df, 0, value_list, key_df)
 
 # Build the lookup structures
 test_clearmatch.create_lookup()
@@ -30,7 +30,7 @@ test_clearmatch.plot()
 
 test_clearmatch.summary()
 
-# Join the host records with potential matches that contain substrings of the host records
+# Join host records with potential matches containing substrings of host records
 joined_data = test_clearmatch.join_substring()
 
 print(joined_data.head(7))
@@ -39,7 +39,7 @@ test_clearmatch.plot()
 
 test_clearmatch.summary()
 
-# Replace the host records with potential matches that contain substrings of the host records
+# Replace host records with matches containing substrings of host records
 replaced_data = test_clearmatch.replace(match_substring=True)
 
 print(replaced_data.head(7))
